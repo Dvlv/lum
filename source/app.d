@@ -1,4 +1,7 @@
 import std.stdio;
+import std.process;
+import std.string;
+
 import gtk.MainWindow;
 import gtk.Main;
 import gtk.Entry;
@@ -6,6 +9,24 @@ import gtk.Button, gtk.Widget, gtk.Box, gdk.Event;
 import gtk.Label;
 import gtk.Grid;
 
+
+string getOutput(string[] cmd) {
+	auto pipes = pipeProcess(cmd, Redirect.stdout | Redirect.stderr);
+	scope(exit) wait(pipes.pid);
+
+	string output = strip(pipes.stdout.readln());
+	
+	return output;	
+}
+
+string getUserRealName(string username) {
+	auto realName = executeShell("getent passwd %s | cut -d: -f5".format(username));
+	if (realName.status == 0) {
+		return strip(realName.output);
+	} else {
+		return "";
+	}
+}
 
 class UserManagerMain
 {
@@ -27,12 +48,18 @@ class UserManagerMain
                 auto usernameEntry = new Entry();
 		auto realNameEntry = new Entry();
 		auto emailEntry = new Entry();
-		auto passwordEntry = new Entry();
+
+		string username = getOutput(["whoami"]);
+		usernameEntry.setText(username);
+		
+		string realName = getUserRealName(username);
+		if (realName) {
+			realNameEntry.setText(realName);
+		}
 
 		auto usernameLabel = new Label("Username:");
 		auto realNameLabel = new Label("Real Name:");
 		auto emailLabel = new Label("Email:");
-		auto passwordLabel = new Label("Password:");
 
 		usernameEntry.setHexpand(true);  // only need to do this once I guess.
 
@@ -50,18 +77,17 @@ class UserManagerMain
 		inputsGrid.attach(emailLabel, 0, 2, 1, 1);
 		inputsGrid.attach(emailEntry, 1, 2, 1, 1);
 
-		inputsGrid.attach(passwordLabel, 0, 3, 1, 1);
-		inputsGrid.attach(passwordEntry, 1, 3, 1, 1);
-
 		this.mainGrid.attach(inputsGrid, 0, 0, 1, 1);
 	}
 
 	void addButtons() {
+		auto changePassButton = new Button("Change Password");
 		auto saveButton = new Button("Save");
 		auto cancelButton = new Button("Cancel");
 
 		Box buttonBox = new Box(Orientation.HORIZONTAL, 50);
 		buttonBox.add(saveButton);
+		buttonBox.add(changePassButton);
 		buttonBox.add(cancelButton);
 
 		this.mainGrid.attach(buttonBox, 0, 1, 1, 1);
