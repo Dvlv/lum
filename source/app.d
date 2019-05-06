@@ -20,9 +20,19 @@ string getOutput(string[] cmd) {
 }
 
 string getUserRealName(string username) {
-	auto realName = executeShell("getent passwd %s | cut -d: -f5".format(username));
-	if (realName.status == 0) {
-		return strip(realName.output);
+	string passOut = getOutput(["getent", "passwd", username]);
+	if (!passOut.length) {
+		return "";
+	}
+	auto cutPipe = pipeProcess(["cut", "-f", "5", "-d", ":"], Redirect.all);
+	cutPipe.stdin.writeln(passOut);
+	cutPipe.stdin.close();
+
+	scope(exit) wait(cutPipe.pid);
+	
+	auto realName = strip(cutPipe.stdout.readln());
+	if (realName.length > 0) {
+		return realName;
 	} else {
 		return "";
 	}
