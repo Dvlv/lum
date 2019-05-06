@@ -55,7 +55,7 @@ class UserManagerMain
 	}
 
 	void addCreateInputs() {
-                auto usernameEntry = new Entry();
+        auto usernameEntry = new Entry();
 		auto realNameEntry = new Entry();
 		auto emailEntry = new Entry();
 
