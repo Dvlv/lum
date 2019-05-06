@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/lwum
+lwum.so
+lwum.dylib
+lwum.dll
+lwum.a
+lwum.lib
+lwum-test-*
+*.exe
+*.o
+*.obj
+*.lst

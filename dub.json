@@ -1,0 +1,12 @@
+{
+	"authors": [
+		"dvlv"
+	],
+	"copyright": "Copyright © 2019, dvlv",
+	"dependencies": {
+		"gtk-d": "~>3.8.5"
+	},
+	"description": "a small user manager",
+	"license": "GPL-3",
+	"name": "lwum"
+}
