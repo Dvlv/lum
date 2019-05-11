@@ -261,7 +261,7 @@ class ChangePasswordDialog : Dialog
     Entry confirmNewPasswordEntry = null;
     
     this(Window parent) {
-        super("Change Your Password", parent);
+        super("Change Your Password", parent, DialogFlags.MODAL, ["Update", "Cancel"], [ResponseType.OK, ResponseType.CANCEL]);
         this.oldPasswordEntry = new Entry();
         this.newPasswordEntry = new Entry();
         this.confirmNewPasswordEntry = new Entry();
@@ -289,17 +289,23 @@ class ChangePasswordDialog : Dialog
         
         this.showAll();
         
-        this.addButton("Update", 1);
-        this.addButton("Cancel", 0);
+        //this.addButton("Update", 2);
+        //this.addButton("Cancel", 3);
         
         this.addOnResponse(&onButtonClicked);
     }
     
     void onButtonClicked(int responseId, Dialog dlg) {
-        if(responseId == 0) {
-            this.destroy();
-        } else {
-            writeln("change pass");
+        // -4 = X button
+        // -5 = Ok
+        // -6 = Cancel
+        switch (responseId) {
+            default: 
+                this.destroy();
+                break;
+            case -5: 
+                writeln("change pass");
+                break;
         }
     }
 
