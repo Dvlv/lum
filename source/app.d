@@ -49,7 +49,7 @@ string[] getAllAvailableUsers()
     auto catPipe = pipeProcess(["cat", "/etc/passwd"], Redirect.stderr | Redirect.stdout);
     scope(exit) wait(catPipe.pid);
     
-    auto grepPipe = pipeProcess(["grep", "-v", "-e", "nologin", "-e", "git-shell"], Redirect.all);
+    auto grepPipe = pipeProcess(["grep", "-v", "-e", "nologin", "-e", "git-shell", "-e", "false"], Redirect.all);
     foreach(catline; catPipe.stdout.byLine) grepPipe.stdin.writeln(catline);
     grepPipe.stdin.close();
     scope(exit) wait(grepPipe.pid);
