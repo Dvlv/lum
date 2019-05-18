@@ -1,3 +1,5 @@
+module helpers.functions;
+
 import std.stdio;
 import std.process;
 import std.string;

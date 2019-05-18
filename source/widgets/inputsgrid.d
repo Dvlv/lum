@@ -1,8 +1,10 @@
+module widgets.inputsgrid;
+
 import gtk.Grid;
 import gtk.Entry;
 import gtk.Label;
 
-import helpers;
+import helpers.functions;
 
 
 class InputsGrid : Grid

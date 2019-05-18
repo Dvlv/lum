@@ -15,9 +15,9 @@ import gtk.ListBoxRow;
 import gtk.MessageDialog, gtk.Dialog;
 import gtk.VBox;
 
-import helpers;
-import inputsgrid;
-import changepassworddialog;
+import helpers.functions;
+import widgets.inputsgrid;
+import widgets.changepassworddialog;
 
 
 class App

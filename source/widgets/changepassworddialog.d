@@ -1,3 +1,5 @@
+module widgets.changepassworddialog;
+
 import std.typecons;
 
 import gtk.Dialog;
@@ -7,7 +9,7 @@ import gtk.Box;
 import gtk.Button;
 import gtk.Window;
 
-import helpers;
+import helpers.functions;
 
 class ChangePasswordDialog : Dialog
 {
