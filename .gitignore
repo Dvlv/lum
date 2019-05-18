@@ -13,3 +13,4 @@ lwum-test-*
 *.o
 *.obj
 *.lst
+tags
