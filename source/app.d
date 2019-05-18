@@ -58,7 +58,7 @@ string[] getAllAvailableUsers()
         wait(catPipe.pid);
 
     auto grepPipe = pipeProcess([
-            "grep", "-v", "-e", "nologin", "-e", "git-shell"
+            "grep", "-v", "-e", "nologin", "-e", "git-shell", "-e", "false",
             ], Redirect.all);
     foreach (catline; catPipe.stdout.byLine)
         grepPipe.stdin.writeln(catline);
