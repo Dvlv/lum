@@ -1,19 +1,16 @@
-import std.stdio;
 import std.process;
 import std.string;
-import std.typecons;
 
 import gtk.MainWindow;
 import gtk.Window;
 import gtk.Main;
-import gtk.Entry;
-import gtk.Button, gtk.Widget, gtk.Box, gdk.Event;
+import gtk.Button;
+import gtk.Box;
+import gtk.Widget;
 import gtk.Label;
 import gtk.Grid;
 import gtk.ListBox;
 import gtk.ListBoxRow;
-import gtk.MessageDialog, gtk.Dialog;
-import gtk.VBox;
 
 import helpers.functions;
 import widgets.inputsgrid;
