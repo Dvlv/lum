@@ -8,6 +8,8 @@ import gtk.Grid;
 import gtk.Entry;
 import gtk.Label;
 import gtk.Button;
+import gtk.Image;
+import gtk.IconTheme;
 import gdk.Pixbuf;
 
 import helpers.functions;
@@ -50,7 +52,7 @@ class InputsGrid : Grid
         this.attach(this.realNameEntry, 2, 1, 1, 1);
 
         this.attach(avatarLabel, 1, 2, 1, 1);
-        this.attach(avatarButton, 2, 2, 1, 1);
+        this.attach(this.avatarButton, 2, 2, 1, 1);
     }
 
     void fillInUserDetails(string username)
@@ -64,9 +66,14 @@ class InputsGrid : Grid
         }
         
         if( exists(expandTilde("~/.face"))) {
-            writeln("face");
+            Image avatarImage = new Image(expandTilde("~/.face"));
+            this.avatarButton.setImage(avatarImage);
         } else {
-            writeln("no face");
+        IconTheme it = new IconTheme();
+        Image plusImage = new Image();
+        Pixbuf plusPixbuf = it.loadIcon("list-add", 20, GtkIconLookupFlags.FORCE_SVG);
+        plusImage.setFromPixbuf(plusPixbuf);
+        this.avatarButton.setImage(plusImage);
         }
     }
 

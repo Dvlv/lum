@@ -148,7 +148,7 @@ class App
 
         saveButton.addOnClicked(&saveChanges);
         changePassButton.addOnClicked(&showChangePasswordDialog);
-        cancelButton.addOnClicked((Button b) => this.destroy());
+        cancelButton.addOnClicked(&cancel);
 
         Box buttonBox = new Box(Orientation.HORIZONTAL, 30);
         buttonBox.setBorderWidth(20);
@@ -159,6 +159,10 @@ class App
         buttonBox.add(cancelButton);
 
         this.mainGrid.attach(buttonBox, UB_GRID_POS[]);
+    }
+
+    void cancel(Button b) {
+        this.win.close();
     }
 
     void saveChanges(Button b)
