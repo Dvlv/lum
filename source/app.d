@@ -1,5 +1,6 @@
 import std.process;
 import std.string;
+import std.typecons;
 
 import gtk.MainWindow;
 import gtk.Window;
@@ -11,11 +12,20 @@ import gtk.Label;
 import gtk.Grid;
 import gtk.ListBox;
 import gtk.ListBoxRow;
+import gtk.Image;
+import gtk.IconTheme;
+import gdk.Pixbuf;
+import gtkc.gtktypes : GtkIconLookupFlags;
 
 import helpers.functions;
 import widgets.inputsgrid;
 import widgets.changepassworddialog;
 
+// Constants
+auto LB_GRID_POS = tuple(0, 0, 1, 2);
+auto RB_GRID_POS = tuple(0, 3, 1, 1);
+auto INP_GRID_POS = tuple(1, 0, 1, 1);
+auto UB_GRID_POS = tuple(1, 1, 1, 1);
 
 class App
 {
@@ -103,10 +113,34 @@ class App
         this.inputsGrid = new InputsGrid();
         this.inputsGrid.fillInUserDetails(this.launchedUser);
 
-        this.mainGrid.attach(this.inputsGrid, 1, 0, 1, 1);
+        this.mainGrid.attach(this.inputsGrid, INP_GRID_POS[]);
     }
 
-    void addButtons()
+    void addCreateRemoveButtons()
+    {
+        Button createButton = new Button();
+        Button removeButton = new Button();
+        IconTheme it = new IconTheme();
+
+        Image plusImage = new Image();
+        Pixbuf plusPixbuf = it.loadIcon("list-add", 20, GtkIconLookupFlags.FORCE_SVG);
+        plusImage.setFromPixbuf(plusPixbuf);
+        createButton.setImage(plusImage);
+
+        Image minusImage = new Image();
+        Pixbuf minusPixbuf = it.loadIcon("list-remove", 20, GtkIconLookupFlags.FORCE_SVG);
+        minusImage.setFromPixbuf(minusPixbuf);
+        removeButton.setImage(minusImage);
+
+        Box box = new Box(Orientation.HORIZONTAL, 30);
+        box.setHomogeneous(true);
+        box.add(createButton);
+        box.add(removeButton);
+
+        this.mainGrid.attach(box, RB_GRID_POS[]);
+    }
+
+    void addUserButtons()
     {
         auto changePassButton = new Button("Change Password");
         auto saveButton = new Button("Save");
@@ -114,6 +148,7 @@ class App
 
         saveButton.addOnClicked(&saveChanges);
         changePassButton.addOnClicked(&showChangePasswordDialog);
+        cancelButton.addOnClicked((Button b) => this.destroy());
 
         Box buttonBox = new Box(Orientation.HORIZONTAL, 30);
         buttonBox.setBorderWidth(20);
@@ -123,7 +158,7 @@ class App
         buttonBox.add(changePassButton);
         buttonBox.add(cancelButton);
 
-        this.mainGrid.attach(buttonBox, 1, 1, 1, 1);
+        this.mainGrid.attach(buttonBox, UB_GRID_POS[]);
     }
 
     void saveChanges(Button b)
@@ -162,11 +197,23 @@ class App
         cpd.run();
     }
 
-    void run()
+    void addWidgetsToMainGrid()
     {
         this.usersList = getExistingUsersListBox();
-        this.mainGrid.attach(this.usersList, 0, 0, 1, 3);
+        this.mainGrid.attach(this.usersList, LB_GRID_POS[]);
+        if (this.isRoot)
+        {
+            addCreateRemoveButtons();
+        }
 
+        addCreateInputs();
+        addUserButtons();
+
+    }
+
+    void run()
+    {
+        addWidgetsToMainGrid();
         this.win.add(mainGrid);
         win.showAll();
         Main.run();
@@ -180,7 +227,5 @@ void main(string[] argv)
 
     App app = new App(argv, isRoot);
     app.launchedUser = me;
-    app.addCreateInputs();
-    app.addButtons();
     app.run();
 }
