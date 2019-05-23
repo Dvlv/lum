@@ -14,3 +14,11 @@ lwum-test-*
 *.obj
 *.lst
 tags
+/lum
+lum.so
+lum.dylib
+lum.dll
+lum.a
+lum.lib
+lum-test-*
+

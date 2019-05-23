@@ -6,7 +6,7 @@
 	"dependencies": {
 		"gtk-d": "~>3.8.5"
 	},
-	"description": "a small user manager",
+	"description": "a light user manager",
 	"license": "GPL-3",
-	"name": "lwum"
+	"name": "lum"
 }
