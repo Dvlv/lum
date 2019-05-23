@@ -1,0 +1,5 @@
+# lwum
+
+- shutdown
+- halt
+- sync
