@@ -53,6 +53,12 @@ class InputsGrid : Grid
 
         this.attach(avatarLabel, 1, 2, 1, 1);
         this.attach(this.avatarButton, 2, 2, 1, 1);
+
+        this.avatarButton.addOnPressed(&changeAvatar);
+    }
+
+    void changeAvatar(Button b) {
+        writeln("Change avatar");
     }
 
     void fillInUserDetails(string username)
@@ -64,16 +70,16 @@ class InputsGrid : Grid
         {
             this.realNameEntry.setText(realName);
         }
-        
+
         if( exists(expandTilde("~/.face"))) {
             Image avatarImage = new Image(expandTilde("~/.face"));
             this.avatarButton.setImage(avatarImage);
         } else {
-        IconTheme it = new IconTheme();
-        Image plusImage = new Image();
-        Pixbuf plusPixbuf = it.loadIcon("list-add", 20, GtkIconLookupFlags.FORCE_SVG);
-        plusImage.setFromPixbuf(plusPixbuf);
-        this.avatarButton.setImage(plusImage);
+            IconTheme it = new IconTheme();
+            Image plusImage = new Image();
+            Pixbuf plusPixbuf = it.loadIcon("list-add", 20, GtkIconLookupFlags.FORCE_SVG);
+            plusImage.setFromPixbuf(plusPixbuf);
+            this.avatarButton.setImage(plusImage);
         }
     }
 
