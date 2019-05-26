@@ -1,3 +1,4 @@
+import std.stdio;
 import std.process;
 import std.string;
 import std.typecons;
@@ -15,7 +16,10 @@ import gtk.ListBoxRow;
 import gtk.Image;
 import gtk.IconTheme;
 import gdk.Pixbuf;
+import gdk.Event;
 import gtkc.gtktypes : GtkIconLookupFlags;
+
+import gobject.Signals;
 
 import helpers.functions;
 import widgets.inputsgrid;
@@ -110,7 +114,7 @@ class App
 
     void addCreateInputs()
     {
-        this.inputsGrid = new InputsGrid();
+        this.inputsGrid = new InputsGrid(this.win);
         this.inputsGrid.fillInUserDetails(this.launchedUser);
 
         this.mainGrid.attach(this.inputsGrid, INP_GRID_POS[]);
@@ -187,6 +191,9 @@ class App
                 showCouldNotUpdateUserError();
             }
         }
+
+        // check if img changed
+
     }
 
     void showCouldNotUpdateUserError()

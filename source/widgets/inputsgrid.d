@@ -4,12 +4,16 @@ import std.file;
 import std.path;
 import std.stdio;
 
+import gtk.Widget;
 import gtk.Grid;
 import gtk.Entry;
 import gtk.Label;
 import gtk.Button;
 import gtk.Image;
 import gtk.IconTheme;
+import gtk.FileChooserDialog;
+import gtk.Window;
+
 import gdk.Pixbuf;
 
 import helpers.functions;
@@ -21,9 +25,13 @@ class InputsGrid : Grid
     Entry usernameEntry = null;
     Entry realNameEntry = null;
     Grid inputsGrid = null;
+    Window parent = null;
+    string currentUser = null;
 
-    this()
+    this(Window parent)
     {
+        this.parent = parent;
+
         this.avatarButton = new Button();
 
         this.usernameEntry = new Entry();
@@ -57,12 +65,38 @@ class InputsGrid : Grid
         this.avatarButton.addOnPressed(&changeAvatar);
     }
 
-    void changeAvatar(Button b) {
-        writeln("Change avatar");
+    void changeAvatar(Button b)
+    {
+        auto fcd = new FileChooserDialog("Select an avatar", this.parent, FileChooserAction.OPEN);
+        string newFaceFile = null;
+
+        int response = fcd.run();
+        if (response == ResponseType.OK)
+        {
+            newFaceFile = fcd.getFilename();
+        }
+
+        fcd.destroy();
+
+        if (newFaceFile)
+        {
+            writeln(newFaceFile);
+            putAvatarImageOntoButton(newFaceFile);
+        }
+
+        //        if (this.currentUser.length && isRoot)
+        //       {
+        //           string accountsServiceFile = "/var/lib/AccountsService/icons/" ~ this.currentUser;
+        //           if (exists(accountsServiceFile))
+        //           {
+        //               newFaceFile.copy(accountsServiceFile);
+        //           }
+        //       }
     }
 
     void fillInUserDetails(string username)
     {
+        this.currentUser = username;
         this.usernameEntry.setText(username);
 
         string realName = getUserRealName(username);
@@ -71,16 +105,25 @@ class InputsGrid : Grid
             this.realNameEntry.setText(realName);
         }
 
-        if( exists(expandTilde("~/.face"))) {
-            Image avatarImage = new Image(expandTilde("~/.face"));
+        putAvatarImageOntoButton(expandTilde("~/.face"));
+    }
+
+    void putAvatarImageOntoButton(string imagePath)
+    {
+        if (exists(imagePath))
+        {
+            Image avatarImage = new Image(imagePath);
             this.avatarButton.setImage(avatarImage);
-        } else {
+        }
+        else
+        {
             IconTheme it = new IconTheme();
             Image plusImage = new Image();
             Pixbuf plusPixbuf = it.loadIcon("list-add", 20, GtkIconLookupFlags.FORCE_SVG);
             plusImage.setFromPixbuf(plusPixbuf);
             this.avatarButton.setImage(plusImage);
         }
+
     }
 
     string getRealNameText()
@@ -88,5 +131,3 @@ class InputsGrid : Grid
         return this.realNameEntry.getText();
     }
 }
-
-
