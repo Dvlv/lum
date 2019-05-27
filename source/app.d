@@ -192,8 +192,9 @@ class App
             }
         }
 
-        // check if img changed
-
+        if (this.inputsGrid.newAvatarPath.length) {
+            writeln("new avatar");
+        }
     }
 
     void showCouldNotUpdateUserError()
