@@ -27,6 +27,7 @@ class InputsGrid : Grid
     Grid inputsGrid = null;
     Window parent = null;
     string currentUser = null;
+    string newAvatarPath = null;
 
     this(Window parent)
     {
@@ -80,8 +81,8 @@ class InputsGrid : Grid
 
         if (newFaceFile)
         {
-            writeln(newFaceFile);
             putAvatarImageOntoButton(newFaceFile);
+            this.newAvatarPath = newFaceFile;
         }
 
         //        if (this.currentUser.length && isRoot)
