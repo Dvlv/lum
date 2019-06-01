@@ -47,22 +47,14 @@ string getUserRealName(string username)
 
 string[] getAllAvailableUsers()
 {
-    auto catPipe = pipeProcess(["cat", "/etc/passwd"], Redirect.stderr | Redirect.stdout);
+    auto catPipe = pipeProcess(["cat", "/etc/shadow"], Redirect.stderr | Redirect.stdout);
     scope (exit)
         wait(catPipe.pid);
 
-    auto grepPipe = pipeProcess([
-            "grep", "-v", "-e", "nologin", "-e", "git-shell", "-e", "false",
-            ], Redirect.all);
-    foreach (catline; catPipe.stdout.byLine)
-        grepPipe.stdin.writeln(catline);
-    grepPipe.stdin.close();
-    scope (exit)
-        wait(grepPipe.pid);
 
-    auto cutPipe = pipeProcess(["cut", "-f", "1", "-d", ":"], Redirect.all);
-    foreach (grepline; grepPipe.stdout.byLine)
-        cutPipe.stdin.writeln(grepline);
+    auto cutPipe = pipeProcess(["cut", "-f", "1,2", "-d", ":"], Redirect.all);
+    foreach (catline; catPipe.stdout.byLine)
+        cutPipe.stdin.writeln(catline);
     cutPipe.stdin.close();
     scope (exit)
         wait(cutPipe.pid);
@@ -71,7 +63,15 @@ string[] getAllAvailableUsers()
     foreach (cutline; cutPipe.stdout.byLine)
         cutLines ~= cutline.idup;
 
-    return cutLines;
+    string[] realUsers;
+    foreach (potentialUser; cutLines) {
+        string[] userToPass = split(potentialUser, ":");
+        if (!(userToPass[1] == "!!" || userToPass[1] == "!")) {
+            realUsers ~= userToPass[0];
+        }
+    }
+
+    return realUsers;
 }
 
 Tuple!(bool, string) changeOwnPassword(string oldPassword, string newPassword, string confirmNew)
