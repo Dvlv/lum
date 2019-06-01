@@ -12,6 +12,7 @@ import gtk.Button;
 import gtk.Image;
 import gtk.IconTheme;
 import gtk.FileChooserDialog;
+import gtk.FileFilter;
 import gtk.Window;
 
 import gdk.Pixbuf;
@@ -68,7 +69,11 @@ class InputsGrid : Grid
 
     void changeAvatar(Button b)
     {
+        auto filter = new FileFilter();
+        filter.addPattern("*.png");
+
         auto fcd = new FileChooserDialog("Select an avatar", this.parent, FileChooserAction.OPEN);
+        fcd.addFilter(filter);
         string newFaceFile = null;
 
         int response = fcd.run();

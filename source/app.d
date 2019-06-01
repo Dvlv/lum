@@ -2,6 +2,8 @@ import std.stdio;
 import std.process;
 import std.string;
 import std.typecons;
+import std.file;
+import std.path;
 
 import gtk.MainWindow;
 import gtk.Window;
@@ -116,6 +118,7 @@ class App
     {
         this.inputsGrid = new InputsGrid(this.win);
         this.inputsGrid.fillInUserDetails(this.launchedUser);
+        this.currentlySelectedUser = this.launchedUser;
 
         this.mainGrid.attach(this.inputsGrid, INP_GRID_POS[]);
     }
@@ -171,8 +174,10 @@ class App
 
     void saveChanges(Button b)
     {
+        bool updatedName = true;
+        bool updatedAvatar = true;
         string realName = this.inputsGrid.getRealNameText();
-        if (realName.length && realName != getUserRealName(currentlySelectedUser))
+        if (realName.length && realName != getUserRealName(this.currentlySelectedUser))
         {
             auto chfnPipe = pipeProcess([
                     "chfn", "-f", format("'%s'", realName),
@@ -180,7 +185,8 @@ class App
                     ], Redirect.stderr | Redirect.stdout);
             if (wait(chfnPipe.pid) != 1)
             {
-                showCouldNotUpdateUserError();
+                updatedName = false;
+//                showCouldNotUpdateUserError();
             }
 
             string chfnOut = strip(chfnPipe.stdout.readln());
@@ -188,12 +194,39 @@ class App
 
             if (chfnErr.length && (indexOf(chfnErr, "login.defs forbids") > -1))
             {
-                showCouldNotUpdateUserError();
+                updatedName = false;
+//                showCouldNotUpdateUserError();
             }
         }
 
         if (this.inputsGrid.newAvatarPath.length) {
-            writeln("new avatar");
+            string iconPath = "";
+            string iconLinkPath = "";
+
+            if (this.isRoot) {
+                iconPath = format("/home/%s/.face", this.currentlySelectedUser);
+                iconLinkPath = format("/home/%s/.face.icon", this.currentlySelectedUser);
+            } else {
+                iconPath = expandTilde("~/.face");
+                iconLinkPath = expandTilde("~/.face.icon");
+            }
+
+            this.inputsGrid.newAvatarPath.copy(iconPath);
+            if (!exists(iconLinkPath)) {
+                symlink(iconPath, iconLinkPath);
+            }
+        }
+
+        if (!updatedName) {
+            writeln("update name failed");
+        }
+
+        if (!updatedAvatar) {
+            writeln("update avatar failed!");
+        }
+
+        if (updatedName && updatedAvatar) {
+            writeln("All updated!");
         }
     }
 
