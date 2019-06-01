@@ -37,7 +37,12 @@ string getUserRealName(string username)
     auto realName = strip(cutPipe.stdout.readln());
     if (realName.length > 0)
     {
-        return realName;
+        string[] gecosPieces = split(realName, ",");
+        if (gecosPieces.length > 0) {
+            return gecosPieces[0];
+        } else {
+            return realName;
+        }
     }
     else
     {
@@ -51,7 +56,6 @@ string[] getAllAvailableUsers()
     scope (exit)
         wait(catPipe.pid);
 
-
     auto cutPipe = pipeProcess(["cut", "-f", "1,2", "-d", ":"], Redirect.all);
     foreach (catline; catPipe.stdout.byLine)
         cutPipe.stdin.writeln(catline);
@@ -64,9 +68,11 @@ string[] getAllAvailableUsers()
         cutLines ~= cutline.idup;
 
     string[] realUsers;
-    foreach (potentialUser; cutLines) {
+    foreach (potentialUser; cutLines)
+    {
         string[] userToPass = split(potentialUser, ":");
-        if (!(userToPass[1] == "!!" || userToPass[1] == "!")) {
+        if (!(userToPass[1] == "!!" || userToPass[1] == "!"))
+        {
             realUsers ~= userToPass[0];
         }
     }
@@ -218,4 +224,12 @@ bool isRootUser()
     return op == "0";
 }
 
+Tuple!(bool, string) createUser(string username, string password, string confirmPassword)
+{
+    if (password != confirmPassword)
+    {
+        return tuple(false, "Passwords do not match!");
+    }
 
+    return tuple(true, "User created!");
+}

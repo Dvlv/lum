@@ -139,12 +139,23 @@ class App
         minusImage.setFromPixbuf(minusPixbuf);
         removeButton.setImage(minusImage);
 
+        createButton.addOnPressed(&this.addUser);
+        removeButton.addOnPressed(&this.removeUser);
+
         Box box = new Box(Orientation.HORIZONTAL, 30);
         box.setHomogeneous(true);
         box.add(createButton);
         box.add(removeButton);
 
         this.mainGrid.attach(box, RB_GRID_POS[]);
+    }
+
+    void addUser(Button b) {
+        writeln("add user");
+    }
+
+    void removeUser(Button b) {
+        writeln("remove user");
     }
 
     void addUserButtons()
@@ -180,10 +191,10 @@ class App
         if (realName.length && realName != getUserRealName(this.currentlySelectedUser))
         {
             auto chfnPipe = pipeProcess([
-                    "chfn", "-f", format("'%s'", realName),
+                    "chfn", "-f", realName,
                     this.currentlySelectedUser
                     ], Redirect.stderr | Redirect.stdout);
-            if (wait(chfnPipe.pid) != 1)
+            if (wait(chfnPipe.pid) != 0)
             {
                 updatedName = false;
 //                showCouldNotUpdateUserError();

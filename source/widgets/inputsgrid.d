@@ -1,5 +1,6 @@
 module widgets.inputsgrid;
 
+import std.string;
 import std.file;
 import std.path;
 import std.stdio;
@@ -111,7 +112,7 @@ class InputsGrid : Grid
             this.realNameEntry.setText(realName);
         }
 
-        putAvatarImageOntoButton(expandTilde("~/.face"));
+        putAvatarImageOntoButton(format("/home/%s/.face", username));
     }
 
     void putAvatarImageOntoButton(string imagePath)
